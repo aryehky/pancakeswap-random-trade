@@ -1,6 +1,6 @@
 {
   "name": "pancakeswap-random-trade",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -23,18 +23,9 @@
     "web3-validator": "^2.0.3",
     "concurrently": "5.1.0"
   },
-  "devDependencies": {
-    "nodemon": "^1.19.1",
-    "sequelize-cli": "^5.5.0"
-  },
   "scripts": {
-    "start-devserver": "node server/app.js",
-    "start-server": "nodemon server/app.js --watch server/*",
-    "start-front": "react-scripts start",
-    "start": "concurrently \"npm run start-front\" \"npm run start-server\"  --kill-others --kill-others-on-fail",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "server": "node server/app.js",
+    "start": "concurrently \"npm run server\" \"react-scripts start\"  --kill-others --kill-others-on-fail"
   },
   "eslintConfig": {
     "extends": [
