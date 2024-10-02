@@ -7,19 +7,19 @@
   pointer-events: none;
 }
 
-.initialSettingDiv{
+.initialSettingDiv {
   margin-bottom: 10px;
 }
 
-.initalItemDiv{
-  margin-top:10px;
+.initalItemDiv {
+  margin-top: 10px;
 }
 
-.btnDiv{
+.btnDiv {
   margin-top: 30px;
   margin-bottom: 10px;
 }
-.footer{
+.footer {
   height: 100px;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -42,7 +42,6 @@
 .App-link {
   color: #61dafb;
 }
-
 
 @keyframes App-logo-spin {
   from {
