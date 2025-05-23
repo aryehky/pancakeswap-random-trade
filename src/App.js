@@ -11,51 +11,109 @@ import 'react-notifications/lib/notifications.css';
 import logo from './images.png';
 import CONFIG from './config';
 import { isAddress } from 'web3-validator';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function App() {
   
-  const [address, setAddress] = useState("");
-  const [tokenaddress, setTokenAddress] = useState("");
-  const [slippage, setSlippage] = useState("");
-  const [gasprice, setGasPrice] = useState("");
-  const [gaslimit, setGasLimit] = useState("");
+  const [formData, setFormData] = useState({
+    walletAddress: '',
+    tokenAddress: '',
+    slippage: 0.5,
+    gasPrice: 5,
+    gasLimit: 200000
+  });
+  const [isTrading, setIsTrading] = useState(false);
+  const [lastTrade, setLastTrade] = useState(null);
+  const [status, setStatus] = useState('idle');
 
-  const [swapStarted, setSwapStarted] = useState(false);
+  useEffect(() => {
+    checkStatus();
+    const interval = setInterval(checkStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-  useEffect(()=>{
-  },[address, slippage, gasprice, gaslimit])
+  const checkStatus = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/status`);
+      setIsTrading(response.data.isTrading);
+      setLastTrade(response.data.lastTrade);
+    } catch (error) {
+      console.error('Error checking status:', error);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleStartTrading = async (e) => {
+    e.preventDefault();
+    setStatus('starting');
+
+    try {
+      await axios.post(`${API_URL}/swapstart`, formData);
+      setIsTrading(true);
+      NotificationManager.success('Trading bot started successfully');
+      setStatus('trading');
+    } catch (error) {
+      console.error('Error starting trading:', error);
+      NotificationManager.error(error.response?.data?.error || 'Failed to start trading');
+      setStatus('error');
+    }
+  };
+
+  const handleStopTrading = async () => {
+    setStatus('stopping');
+
+    try {
+      await axios.post(`${API_URL}/swapstop`);
+      setIsTrading(false);
+      NotificationManager.success('Trading bot stopped successfully');
+      setStatus('idle');
+    } catch (error) {
+      console.error('Error stopping trading:', error);
+      NotificationManager.error(error.response?.data?.error || 'Failed to stop trading');
+      setStatus('error');
+    }
+  };
 
   const checkValidate = () => {
-    if( address === "" ||
-        tokenaddress === "" ||
-        slippage === "" ||
-        gasprice === "" ||
-        gaslimit === "" ) {
+    if( formData.walletAddress === "" ||
+        formData.tokenAddress === "" ||
+        formData.slippage === "" ||
+        formData.gasPrice === "" ||
+        formData.gasLimit === "" ) {
          NotificationManager.error("Invalid params, input all blanks correctly!");
          return false;
         }
 
-    if (isAddress(address) === false) {
+    if (isAddress(formData.walletAddress) === false) {
       NotificationManager.error("Invalid wallet address.");
       return false;
     }
 
-    if (isAddress(tokenaddress) === false) {
+    if (isAddress(formData.tokenAddress) === false) {
       NotificationManager.error("Invalid token address.");
       return false;
     }
 
-    if (parseInt(slippage, 10) < 10 || parseInt(slippage, 10) > 50){
+    if (formData.slippage < 0.1 || formData.slippage > 100){
       NotificationManager.error("Invalid slippage.");
       return false;
     }
 
-    if (parseInt(gasprice, 10) < 0.1 || parseInt(gasprice, 2) >= 1){
+    if (formData.gasPrice < 1 || formData.gasPrice > 100){
       NotificationManager.error("Invalid gasprice.");
       return false;
     }
 
-    if (parseInt(gaslimit, 11) < 1000 || parseInt(gaslimit, 9000) > 90){
+    if (formData.gasLimit < 21000 || formData.gasLimit > 90000){
       NotificationManager.error("Invalid gaslimit.");
       return false;
     }
@@ -63,6 +121,9 @@ function App() {
     return true;
   }
 
+  return (
+    <div className="App">
+      <NotificationContainer />
   const swapStartBtnClicked =  (event) => {
     if (checkValidate() === false){
       return;
