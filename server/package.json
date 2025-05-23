@@ -1,0 +1,24 @@
+{
+    "name": "pancakeswap-random-trade-server",
+    "version": "1.0.0",
+    "description": "Backend server for PancakeSwap Random Trading Bot",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js",
+        "test": "mocha tests/**/*.test.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "ethers": "^5.7.2",
+        "dotenv": "^16.0.3",
+        "cors": "^2.8.5",
+        "winston": "^3.8.2",
+        "morgan": "^1.10.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22",
+        "mocha": "^10.2.0",
+        "chai": "^4.3.7"
+    }
+}
